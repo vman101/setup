@@ -22,9 +22,33 @@
       // Chat with AI
       "space a c": "assistant::ToggleFocus",
       // Go to file with `gf`
-      "g f": "editor::OpenExcerpts"
+      "g f": "editor::OpenExcerpts",
+      "ctrl-w": "workspace::ToggleLeftDock",
+      "shift-s": null
     }
   },
+  {
+    "context": "vim_mode == visual",
+    "bindings": {
+    "shift-s ": [
+        "vim::PushOperator",
+        {
+          "AddSurrounds": {}
+        }
+      ]
+    }
+  },
+
+{
+  "context": "VimControl && !menu",
+  "bindings": {
+    "w": "vim::NextSubwordStart",
+    "b": "vim::PreviousSubwordStart",
+    "e": "vim::NextSubwordEnd",
+    "g e": "vim::PreviousSubwordEnd"
+  }
+}
+
   {
     "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
     "bindings": {
@@ -74,11 +98,13 @@
       "ctrl-s": "workspace::Save",
       // File finder
       "space space": "file_finder::Toggle",
+      "ctrl-t": "workspace::NewTerminal",
+      "ctrl-x": "pane::CloseActiveItem"
       // TODO: Open other files
       // Show project panel with current file
-      "ctrl-e": "pane::RevealInProjectPanel"
     }
   },
+
   // Empty pane, set of keybindings that are available when there is no active editor
   {
     "context": "EmptyPane || SharedScreen",
@@ -87,7 +113,7 @@
       "space space": "file_finder::Toggle",
       // Open recent project
       "space f p": "projects::OpenRecent",
-      "ctrl-e": "workspace::ToggleLeftDock"
+      "ctrl-w": "workspace::ToggleLeftDock"
     }
   },
   // Comment code
@@ -98,14 +124,19 @@
       "g c": "editor::ToggleComments"
     }
   },
+
   // Better escape
   {
     "context": "Editor && vim_mode == insert && !menu",
     "bindings": {
       "j j": "vim::NormalBefore", // remap jj in insert mode to escape
-      "j k": "vim::NormalBefore" // remap jk in insert mode to escape
+      "j k": "vim::NormalBefore", // remap jk in insert mode to escape
+      "enter": "editor::ConfirmCompletion",
+      "tab": "editor::Tab",
+      "ctrl-n": null
     }
   },
+
   // Rename
   {
     "context": "Editor && vim_operator == c",
@@ -114,6 +145,7 @@
       "r": "editor::Rename" // zed specific
     }
   },
+
   // Code Action
   {
     "context": "Editor && vim_operator == c",
@@ -122,17 +154,27 @@
       "a": "editor::ToggleCodeActions" // zed specific
     }
   },
+
   // Toggle terminal
   {
     "context": "Workspace",
     "bindings": {
+      "ctrl-t": "workspace::NewCenterTerminal",
       "ctrl-\\": "terminal_panel::ToggleFocus"
     }
   },
+
   {
     "context": "Terminal",
-    "bindings": {}
+    "bindings": {
+      "ctrl-h": ["workspace::ActivatePaneInDirection", "Left"],
+      "ctrl-l": ["workspace::ActivatePaneInDirection", "Right"],
+      "ctrl-k": ["workspace::ActivatePaneInDirection", "Up"],
+      "ctrl-j": ["workspace::ActivatePaneInDirection", "Down"],
+      "ctrl-w": "workspace::ToggleLeftDock"
+    }
   },
+
   // File panel (netrw)
   {
     "context": "ProjectPanel && not_editing",
@@ -147,9 +189,10 @@
       // Close project panel as project file panel on the right
       "q": "workspace::ToggleRightDock",
       "space e": "workspace::ToggleRightDock",
-      "ctrl-e": "workspace::ToggleLeftDock"
+      "ctrl-w": "workspace::ToggleLeftDock"
     }
   },
+
   // Panel nagivation
   {
     "context": "Dock",
@@ -159,14 +202,8 @@
       "ctrl-k": ["workspace::ActivatePaneInDirection", "Up"],
       "ctrl-j": ["workspace::ActivatePaneInDirection", "Down"]
     }
-  },
-  {
-    "context": "Workspace",
-    "bindings": {
-      // Map VSCode like keybindings
-      "cmd-b": "workspace::ToggleRightDock"
-    }
   }
+
   // Subword motion is not working really nice with `ciw`, disable for now
   // {
   //   "context": "VimControl && !menu",
