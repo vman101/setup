@@ -47,7 +47,7 @@
     "e": "vim::NextSubwordEnd",
     "g e": "vim::PreviousSubwordEnd"
   }
-}
+},
 
   {
     "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
@@ -55,6 +55,7 @@
       // put key-bindings here if you want them to work only in normal mode
       // Window movement bindings
       // Ctrl jklk to move between panes
+      "ctrl-w": "workspace::ToggleLeftDock",
       "ctrl-h": ["workspace::ActivatePaneInDirection", "Left"],
       "ctrl-l": ["workspace::ActivatePaneInDirection", "Right"],
       "ctrl-k": ["workspace::ActivatePaneInDirection", "Up"],
@@ -98,7 +99,7 @@
       "ctrl-s": "workspace::Save",
       // File finder
       "space space": "file_finder::Toggle",
-      "ctrl-t": "workspace::NewTerminal",
+      "ctrl-t": "workspace::ToggleRightDock",
       "ctrl-x": "pane::CloseActiveItem"
       // TODO: Open other files
       // Show project panel with current file
@@ -159,8 +160,8 @@
   {
     "context": "Workspace",
     "bindings": {
-      "ctrl-t": "workspace::NewCenterTerminal",
-      "ctrl-\\": "terminal_panel::ToggleFocus"
+      "ctrl-\\": "terminal_panel::ToggleFocus",
+      "ctrl-w": "workspace::ToggleLeftDock"
     }
   },
 
@@ -171,7 +172,9 @@
       "ctrl-l": ["workspace::ActivatePaneInDirection", "Right"],
       "ctrl-k": ["workspace::ActivatePaneInDirection", "Up"],
       "ctrl-j": ["workspace::ActivatePaneInDirection", "Down"],
-      "ctrl-w": "workspace::ToggleLeftDock"
+      "ctrl-w": "workspace::ToggleLeftDock",
+      "ctrl-t": "workspace::ToggleRightDock",
+      "ctrl-shift-t": "workspace::NewTerminal"
     }
   },
 
