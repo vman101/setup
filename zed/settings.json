@@ -7,85 +7,84 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-	"terminal": {
-		"dock": "right"
-	},
-	"toolbar": {
-		"show": false
-	},
-	"indent_guides": {
-		"enabled": true,
-		"line_width": 1,
-		"active_line_width": 1,
-		"coloring": "fixed",
-		"background_coloring": "disabled"
-	},
-	"line_indicator_format": "short",
-	"relative_line_numbers": true,
-	"tab_bar": {
-		"show": true,
-		"show_nav_history_buttons": false
-	},
-	"ensure_final_newline_on_save": false,
-	"vim": {
-		"use_system_clipboard": "always"
-	},
-	"scrollbar": { "show": "never" },
-	"vim_mode": true,
-	"ui_font_size": 12,
-	"hard_tabs": true,
-	"buffer_font_size": 10,
-	/*"autosave": "on_focus_change",*/
-	"theme": {
-		"mode": "system",
-		"light": "Solarized Dark",
-		"dark": "Solarized Dark"
-	},
-	"languages": {
-		"C": {
-			"format_on_save": "on",
-			"formatter": "language_server",
-			"hard_tabs": true,
-			"tab_size": 4,
-			"always_treat_brackets_as_autoclosed": true,
-			"preferred_line_length": 100,
-			"enable_language_server": true,
-			"inlay_hints": {
-				"show_parameter_hints": true,
-				"enabled": false
-			}
-		},
-		"Rust": {
-			"format_on_save": "on",
-			"formatter": "language_server",
-			"hard_tabs": true,
-			"tab_size": 4,
-			"preferred_line_length": 150,
-			"enable_language_server": true,
-			"always_treat_brackets_as_autoclosed": true,
-			"inlay_hints": {
-				"show_parameter_hints": true,
-				"enabled": false
-			}
-		},
-		"JSON": {
-			"enable_language_server": true,
-			"inlay_hints": {
-				"show_parameter_hints": true,
-				"enabled": true
-			}
-		},
-		"JSONC": {
-			"enable_language_server": true,
-			"inlay_hints": {
-				"show_parameter_hints": true,
-				"enabled": true
-			}
-		}
-	},
-	"command_aliases": {
-		"W": "w",
-		"Wq": "wq",
-		"Q": "q"
-	}
+  "terminal": {
+    "dock": "right"
+  },
+  "toolbar": {
+    "show": false
+  },
+  "show_inline_completions": false,
+  "indent_guides": {
+    "enabled": true,
+    "line_width": 1,
+    "active_line_width": 1,
+    "coloring": "fixed",
+    "background_coloring": "disabled"
+  },
+  "line_indicator_format": "short",
+  "relative_line_numbers": true,
+  "tab_bar": {
+    "show": true,
+    "show_nav_history_buttons": false
+  },
+  "ensure_final_newline_on_save": false,
+  "vim": {
+    "use_system_clipboard": "always"
+  },
+  "scrollbar": { "show": "never" },
+  "vim_mode": true,
+  "ui_font_size": 12,
+  "hard_tabs": true,
+  "buffer_font_size": 10,
+  /*"autosave": "on_focus_change",*/
+  "theme": {
+    "mode": "system",
+    "light": "Solarized Dark",
+    "dark": "Solarized Dark"
+  },
+  "languages": {
+    "C": {
+      "show_inline_completions": true,
+      "hard_tabs": true,
+      "tab_size": 4,
+      "always_treat_brackets_as_autoclosed": true,
+      "preferred_line_length": 100,
+      "enable_language_server": true,
+      "inlay_hints": {
+        "show_parameter_hints": true,
+        "enabled": false
+      }
+    },
+    "Rust": {
+      "format_on_save": "on",
+      "formatter": "language_server",
+      "hard_tabs": true,
+      "tab_size": 4,
+      "preferred_line_length": 150,
+      "enable_language_server": true,
+      "inlay_hints": {
+        "show_parameter_hints": true,
+        "enabled": false
+      }
+    },
+    "JSON": {
+      "enable_language_server": true,
+      "inlay_hints": {
+        "show_parameter_hints": true,
+        "enabled": true
+      }
+    },
+    "JSONC": {
+      "enable_language_server": true,
+      "inlay_hints": {
+        "show_parameter_hints": true,
+        "enabled": true
+      }
+    }
+  },
+  "command_aliases": {
+    "W": "w",
+    "Wq": "wq",
+    "Q": "q"
+  }
 }
