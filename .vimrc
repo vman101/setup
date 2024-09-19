@@ -1,21 +1,27 @@
 set nocompatible              " be iMproved, required
+set clipboard+=unnamedplus
+
 filetype off                  " required
-syntax enable
 " set the runtime path to include Vundle and initialize
 let mapleader = ','
+let g:nvim_tree_show_icons = 1
+
 set rtp+=~/.vim/bundle/Vundle.vim
+
 call vundle#begin()
+Plugin 'rust-lang/rust.vim'
+Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'HealsCodes/vim-gas'
-Plugin 'LunarWatcher/auto-pairs'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-fugitive'
-Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-Plugin 'puremourning/vimspector'
 call vundle#end()            " required
 filetype plugin on    " required
+set ttimeoutlen=100
 
-colorscheme slate
+colorscheme retrobox
+let g:onedark_config = {
+    \ 'style': 'warmer',
+\}
+set cursorline
+set cursorcolumn
 set mouse=
 set bs=2
 set tabstop=4
@@ -31,10 +37,11 @@ set	smartindent
 set	completeopt=menuone,longest
 
 "shortcuts
-command CC !cc -g -Wall -Wextra -Werror *.c -o output && ./output
+command CC !cc -g -Wall -Wextra *.c -o output && ./output
 command C !norminette *.c
-nnoremap <C-a> :vs +Explore<CR>
-nnoremap <C-t> :tabnew<cr>
+nnoremap <S-t> :vertical terminal <CR>
+nnoremap <C-w> :NvimTreeToggle<cr>
+nnoremap <C-t> :tabnew 
 nnoremap <S-h> :tabprev<CR>
 nnoremap <S-l> :tabnext<CR>
 nnoremap <C-l> <C-w><C-l>
@@ -43,8 +50,11 @@ nnoremap <C-k> <C-w><C-k>
 nnoremap <C-j> <C-w><C-j>
 nnoremap <C-<> 10<C-w><<>
 nnoremap <C->> 10<C-w><>>
+nnoremap <C-left> 5<c-w><
+nnoremap <C-right> 5<c-w>>
+nnoremap <C-up> 5<c-w>+
+nnoremap <C-down> 5<c-w>-
 inoremap jk <esc>
-vnoremap jk <esc>
 cnoremap jk <esc>
 inoremap <M-tab> <C-n>
 inoremap { {}<esc>ha
@@ -53,22 +63,24 @@ inoremap [ []<Esc>ha
 inoremap " ""<Esc>ha
 inoremap ' ''<Esc>ha
 inoremap ` ``<Esc>ha
-
-"vimspector
-nnoremap <F2> :VimspectorDisassemble<cr>
-nnoremap <F3> :VimspectorReset<cr>:set mouse=<cr>
-nnoremap <F4> <Plug>VimspectorRestart
-nnoremap <F5> :set mouse=a<cr><Plug>VimspectorContinue<cr>
-nnoremap <F6> <Plug>VimspectorPause
-nnoremap <F8> <Plug>VimspectorBreakpoint
-nnoremap <F10> <Plug>VimspectorStepOver
-nnoremap <F11> <Plug>VimspectorStepInto
-nnoremap <F12> <Plug>VimspectorStepOut
+tnoremap <Esc> <C-\><C-n>
 
 function! CheckBackSpace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+
+augroup cVariables
+    autocmd!
+    autocmd FileType c syntax match cVariable /\v\<[a-zA-Z_]\w*\>/ contained
+    autocmd FileType c highlight cVariable guifg=#90ee90
+augroup END
+
+function! s:set_c_variable_highlight()
+    highlight cVariable ctermfg=blue
+endfunction
+
+autocmd FileType c call s:set_c_variable_highlight()
 
 
 set statusline=
