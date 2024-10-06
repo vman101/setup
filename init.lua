@@ -1,63 +1,139 @@
 vim.cmd ("source ~/.vimrc")
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 vim.cmd ("set mouse=a")
-vim.opt.rtp:prepend(lazypath)
 -- Example using a list of specs with the default options
-vim.g.mapleader = " " -- Make sure to set `mapleader` before lazy so your mappings are correct
-vim.g.maplocalleader = "\\" -- Same for `maplocalleader`
+vim.g.mapleader = " " -- Make sure to set `mapleader` before lazy so your mappings are correct vim.g.maplocalleader = "\\" -- Same for `maplocalleader`
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    {
+{
       "neovim/nvim-lspconfig",
        after = "nvim-lspconfig",
        config = function()
          require("lspconfig").clangd.setup{} -- Configure for your specific language server
+         require("lspconfig").rust_analyzer.setup{} -- Configure for your specific language server
        end,
     },
-    {
-      'nvimdev/lspsaga.nvim',
-    config = function()
-        require('lspsaga').setup({})
-    end,
-    dependencies = {
-        'nvim-treesitter/nvim-treesitter', -- optional
-        'nvim-tree/nvim-web-devicons',     -- optional
-    }
-    },
-    -- lspsaga.nvim
+  'hrsh7th/nvim-cmp', -- Autocompletion plugin
+  'hrsh7th/cmp-buffer', -- Buffer completions
+  'hrsh7th/cmp-path', -- Path completions
+  'hrsh7th/cmp-nvim-lsp', -- LSP source for
+	'hrsh7th/cmp-nvim-lsp-signature-help',  -- Signature help source for nvim-cmp
     'nvim-tree/nvim-web-devicons',
-    'hrsh7th/cmp-nvim-lsp',
     'nvimdev/lspsaga.nvim',
-    'hrsh7th/cmp-buffer',
-    'hrsh7th/cmp-path',
-    'hrsh7th/cmp-cmdline',
-    'hrsh7th/nvim-cmp',
-    'L3MON4D3/LuaSnip',
-    'saadparwaiz1/cmp_luasnip',
+    'nvim-tree/nvim-tree.lua',
     'VundleVim/Vundle.vim',
     '42Paris/42header',
-    'sheerun/vim-polyglot',
-    'preservim/nerdtree',
-    'HealsCodes/vim-gas',
     'LunarWatcher/auto-pairs',
     'tpope/vim-surround',
     'christoomey/vim-tmux-navigator',
-    'navarasu/onedark.nvim',
-    'tpope/vim-fugitive',
-    "folke/which-key.nvim",
-    { "folke/neoconf.nvim", cmd = "Neoconf" },
-    "folke/neodev.nvim",
-    { "nvim-treesitter/nvim-treesitter", cmd = "TSUpdate" },
-
+    "nvim-treesitter/nvim-treesitter",
+	"puremourning/vimspector",
+	    'L3MON4D3/LuaSnip',
+    'saadparwaiz1/cmp_luasnip',
+  'nvim-lua/plenary.nvim' ,
+'ThePrimeagen/harpoon'  , 
+'nvim-telescope/telescope.nvim', tag = '0.1.8',
+-- or                              , branch = '0.1.x',
+      dependencies = { 'nvim-lua/plenary.nvim' }}
+	  )
+local nvim_lsp = require('lspconfig')
+nvim_lsp.rust_analyzer.setup {
+  on_attach = function(client, bufnr)
+    local opts = { noremap=true, silent=true }
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  end,
+  settings = {
+    ["rust-analyzer"] = {}
+  }
+}
+require("harpoon").setup({
+    menu = {
+        width = vim.api.nvim_win_get_width(0) - 4,
+    }
 })
-require("lazy").setup(plugins, opts)
-require('lspsaga').setup({})
-require'luasnip'.config.setup({
-  expand_on_enter = false,
-})
-  local cmp = require'cmp'
+require("telescope").load_extension('harpoon')
+require('telescope').setup{
+  defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+    mappings = {
+      i = {
+        -- map actions.which_key to <C-h> (default: <C-/>)
+        -- actions.which_key shows the mappings for your picker,
+        -- e.g. git_{create, delete, ...}_branch for the git_branches picker
+        ["<C-h>"] = "which_key"
+      }
+    }
+  },
+  pickers = {
+    -- Default configuration for builtin pickers goes here:
+    -- picker_name = {
+    --   picker_config_key = value,
+    --   ...
+    -- }
+    -- Now the picker_config_key will be applied every time you call this
+    -- builtin picker
+  },
+  extensions = {
+    -- Your extension configuration goes here:
+    -- extension_name = {
+    --   extension_config_key = value,
+    -- }
+    -- please take a look at the readme of the extension you want to configure
+  }
+}
 
-  cmp.setup({
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>f', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>g', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>b', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<leader>h', builtin.help_tags, { desc = 'Telescope help tags' })
+local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+local lspconfig = require('lspconfig')
+local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+require('lspconfig')['clangd'].setup {
+  capabilities = capabilities
+}
+
+require'nvim-treesitter.configs'.setup {
+  -- A list of parser names, or "all" (the five listed parsers should always be installed)
+  ensure_installed = { "c", "rust", "lua", "vim", "vimdoc", "query" },
+
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- Automatically install missing parsers when entering buffer
+
+  highlight = {
+    enable = true,
+  },
+}
+
+require("nvim-web-devicons")
+
+require("nvim-tree").setup()
+require'nvim-web-devicons'.get_icons()
+
+-- disable netrw at the very start of your init.lua
+
+-- Setup nvim-cmp
+
+local cmp = require'cmp'
+cmp.setup({
     snippet = {
       -- REQUIRED - you must specify a snippet engine
       expand = function(args)
@@ -73,8 +149,6 @@ require'luasnip'.config.setup({
       documentation = cmp.config.window.bordered(),
     },
     mapping = cmp.mapping.preset.insert({
-    ['<Tab>'] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-    ['<S-Tab>'] = cmp.mapping.select_prev_item(),
     ['<CR>'] = cmp.mapping.confirm({
       behavior = function(fallback)
         if cmp.visible() then
@@ -91,11 +165,11 @@ require'luasnip'.config.setup({
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
       { name = 'luasnip' }, -- For luasnip users.
+		{ name = 'nvim_lsp_signature_help' },  -- Signature help
     }, {
       { name = 'buffer' },
     })
   })
-vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<cr>')
   -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline({ '/', '?' }, {
     mapping = cmp.mapping.preset.cmdline(),
@@ -118,76 +192,15 @@ vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<cr>')
   -- Set up lspconfig.
   local capabilities = require('cmp_nvim_lsp').default_capabilities()
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+  require('lspconfig')['rust_analyzer'].setup {
+    capabilities = capabilities
+  }
   require('lspconfig')['clangd'].setup {
     capabilities = capabilities
   }
-
-require'nvim-treesitter.configs'.setup {
-  -- A list of parser names, or "all" (the five listed parsers should always be installed)
-  ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
-
-  -- Install parsers synchronously (only applied to `ensure_installed`)
-  sync_install = false,
-
-  -- Automatically install missing parsers when entering buffer
-  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-  auto_install = true,
-
-  highlight = {
-    enable = true,
-  },
+-- Setup lspconfig
+require('lspconfig')['clangd'].setup {
+  capabilities = capabilities
 }
-
-require'nvim-web-devicons'.setup {
- -- your personnal icons can go here (to override)
- -- you can specify color or cterm_color instead of specifying both of them
- -- DevIcon will be appended to `name`
- override = {
-  zsh = {
-    icon = "",
-    color = "#428850",
-    cterm_color = "65",
-    name = "Zsh"
-  }
- };
- -- globally enable different highlight colors per icon (default to true)
- -- if set to false all icons will have the default icon's color
- color_icons = true;
- -- globally enable default icons (default to false)
- -- will get overriden by `get_icons` option
- default = true;
- -- globally enable "strict" selection of icons - icon will be looked up in
- -- different tables, first by filename, and if not found by extension; this
- -- prevents cases when file doesn't have any extension but still gets some icon
- -- because its name happened to match some extension (default to false)
- strict = true;
- -- same as `override` but specifically for overrides by filename
- -- takes effect when `strict` is true
- override_by_filename = {
-  [".gitignore"] = {
-    icon = "",
-    color = "#f1502f",
-    name = "Gitignore"
-  }
- };
- -- same as `override` but specifically for overrides by extension
- -- takes effect when `strict` is true
- override_by_extension = {
-  ["log"] = {
-    icon = "",
-    color = "#81e043",
-    name = "Log"
-  }
- };
- -- same as `override` but specifically for operating system
- -- takes effect when `strict` is true
- override_by_operating_system = {
-  ["apple"] = {
-    icon = "",
-    color = "#A2AAAD",
-    cterm_color = "248",
-    name = "Apple",
-  },
- };
-}
-require'nvim-web-devicons'.get_icons()
+-- optionally enable 24-bit colour
+vim.opt.termguicolors = true
