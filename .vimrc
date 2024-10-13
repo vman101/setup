@@ -16,10 +16,6 @@ call vundle#end()            " required
 filetype plugin on    " required
 set ttimeoutlen=100
 
-colorscheme retrobox
-let g:onedark_config = {
-    \ 'style': 'warmer',
-\}
 set cursorline
 set cursorcolumn
 set mouse=
@@ -35,6 +31,8 @@ set cindent
 set autoindent
 set	smartindent
 set	completeopt=menuone,longest
+
+colorscheme wildcharm
 
 "shortcuts
 command CC !cc -g -Wall -Wextra *.c -o output && ./output
@@ -64,6 +62,9 @@ inoremap " ""<Esc>ha
 inoremap ' ''<Esc>ha
 inoremap ` ``<Esc>ha
 tnoremap <Esc> <C-\><C-n>
+nnoremap <silent> <C-b> 
+nnoremap <silent> <C-b> :let @/="" <Bar>noh<CR>
+
 
 function! CheckBackSpace() abort
   let col = col('.') - 1
@@ -81,7 +82,6 @@ function! s:set_c_variable_highlight()
 endfunction
 
 autocmd FileType c call s:set_c_variable_highlight()
-
 
 set statusline=
 set statusline +=%1*\ %n\ %*            "buffer number
