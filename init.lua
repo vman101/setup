@@ -204,3 +204,4 @@ require('lspconfig')['clangd'].setup {
 }
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
+vim.api.nvim_set_hl(0, '@lsp.type.function', { fg = '#FFaaaa', bold = true })
