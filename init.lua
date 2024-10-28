@@ -227,7 +227,6 @@ cmp.setup({
   })
 
 vim.opt.termguicolors = true
-
 vim.api.nvim_set_hl(0, '@lsp.type.function', { fg = '#FFaaaa', bold = true })
 -- Require LuaSnip
 local ls = require("luasnip")
