@@ -22,14 +22,15 @@ require("lazy").setup({
       "neovim/nvim-lspconfig",
        after = "nvim-lspconfig",
        config = function()
-         require("lspconfig").clangd.setup{} -- Configure for your specific language server
          require("lspconfig").rust_analyzer.setup{} -- Configure for your specific language server
        end,
     },
-  'hrsh7th/nvim-cmp', -- Autocompletion plugin
-  'hrsh7th/cmp-buffer', -- Buffer completions
-  'hrsh7th/cmp-path', -- Path completions
-  'hrsh7th/cmp-nvim-lsp', -- LSP source for
+	'voldikss/vim-floaterm',
+	"rafamadriz/friendly-snippets",
+	'hrsh7th/nvim-cmp', -- Autocompletion plugin
+  	'hrsh7th/cmp-buffer', -- Buffer completions
+  	'hrsh7th/cmp-path', -- Path completions
+  	'hrsh7th/cmp-nvim-lsp', -- LSP source for
 	'hrsh7th/cmp-nvim-lsp-signature-help',  -- Signature help source for nvim-cmp
     'nvim-tree/nvim-web-devicons',
     'nvimdev/lspsaga.nvim',
@@ -40,12 +41,13 @@ require("lazy").setup({
     'tpope/vim-surround',
     'christoomey/vim-tmux-navigator',
     "nvim-treesitter/nvim-treesitter",
+    'simrat39/rust-tools.nvim',
 	"puremourning/vimspector",
-	    'L3MON4D3/LuaSnip',
+	'L3MON4D3/LuaSnip',
     'saadparwaiz1/cmp_luasnip',
-  'nvim-lua/plenary.nvim' ,
-'ThePrimeagen/harpoon'  , 
-'nvim-telescope/telescope.nvim', tag = '0.1.8',
+	'nvim-lua/plenary.nvim' ,
+	'ThePrimeagen/harpoon'  , 
+	'nvim-telescope/telescope.nvim', tag = '0.1.8',
 -- or                              , branch = '0.1.x',
       dependencies = { 'nvim-lua/plenary.nvim' }}
 	  )
@@ -64,6 +66,19 @@ require("harpoon").setup({
         width = vim.api.nvim_win_get_width(0) - 4,
     }
 })
+settings = {
+    ["rust-analyzer"] = {
+        cargo = {
+            allFeatures = true
+        },
+        checkOnSave = {
+            command = "clippy"
+        },
+        rustfmt = {
+            enableRangeFormatting = true
+        }
+    }
+}
 require("telescope").load_extension('harpoon')
 require('telescope').setup{
   defaults = {
@@ -96,18 +111,40 @@ require('telescope').setup{
   }
 }
 
+-- Enable LSP for rust-analyzer with nvim-lspconfig
+require("lspconfig").clangd.setup{} -- Configure for your specific language server
+local nvim_lsp = require('lspconfig')
+require('rust-tools').setup({})
+
+nvim_lsp.rust_analyzer.setup({
+    settings = {
+        ["rust-analyzer"] = {
+            checkOnSave = {
+                command = "clippy"  -- This ensures Clippy runs automatically on save
+            }
+        }
+    },
+    on_attach = function(client, bufnr)
+        -- Mappings for LSP
+        local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+        local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+        buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+        -- LSP mappings (example)
+        local opts = { noremap=true, silent=true }
+        buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        buf_set_keymap('n', '<leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', opts)
+        buf_set_keymap('n', '<leader>ca', '<Cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+    end
+})
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>f', builtin.find_files, { desc = 'Telescope find files' })
 vim.keymap.set('n', '<leader>g', builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>b', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>h', builtin.help_tags, { desc = 'Telescope help tags' })
 local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
-local lspconfig = require('lspconfig')
-local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-require('lspconfig')['clangd'].setup {
-  capabilities = capabilities
-}
 
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all" (the five listed parsers should always be installed)
@@ -189,18 +226,11 @@ cmp.setup({
     matching = { disallow_symbol_nonprefix_matching = false }
   })
 
-  -- Set up lspconfig.
-  local capabilities = require('cmp_nvim_lsp').default_capabilities()
-  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  require('lspconfig')['rust_analyzer'].setup {
-    capabilities = capabilities
-  }
-  require('lspconfig')['clangd'].setup {
-    capabilities = capabilities
-  }
--- Setup lspconfig
-require('lspconfig')['clangd'].setup {
-  capabilities = capabilities
-}
--- optionally enable 24-bit colour
 vim.opt.termguicolors = true
+
+vim.api.nvim_set_hl(0, '@lsp.type.function', { fg = '#FFaaaa', bold = true })
+-- Require LuaSnip
+local ls = require("luasnip")
+
+-- Load snippet files automatically (optional)
+require("luasnip.loaders.from_vscode").lazy_load()
