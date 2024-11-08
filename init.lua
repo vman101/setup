@@ -148,7 +148,7 @@ local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all" (the five listed parsers should always be installed)
-  ensure_installed = { "c", "rust", "lua", "vim", "vimdoc", "query" },
+  ensure_installed = { "c", "rust", "lua", "vim", "vimdoc", "query", "html", "typescript"},
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
@@ -226,10 +226,54 @@ cmp.setup({
     matching = { disallow_symbol_nonprefix_matching = false }
   })
 
+vim.api.nvim_set_hl(0, '@variable.member.typescript', { fg = '#f0f0f0', bold = true })
+vim.api.nvim_set_hl(0, '@function.method.call.typescript', { fg = '#aafaaa', bold = true })
+
 vim.opt.termguicolors = true
 vim.api.nvim_set_hl(0, '@lsp.type.function', { fg = '#FFaaaa', bold = true })
 -- Require LuaSnip
 local ls = require("luasnip")
 
--- Load snippet files automatically (optional)
+-- Import the lspconfig and lspsaga modules
+local lspconfig = require('lspconfig')
+local saga = require('lspsaga')
+
+-- Setup LSPSaga
+saga.setup({
+  -- LSPSaga configuration options
+  -- Enable other LSPSaga customizations as desired
+})
+
+-- TypeScript Language Server setup
+lspconfig.ts_ls.setup({
+  on_attach = function(client, bufnr)
+    -- Optional: disable tsserver formatting in favor of a dedicated formatter
+    client.server_capabilities.document_formatting = false
+
+    -- Keybindings for LSP (add more as needed)
+    local opts = { noremap = true, silent = true }
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>Lspsaga peek_definition<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>Lspsaga rename<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>Lspsaga hover_doc<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>Lspsaga code_action<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>cd', '<cmd>Lspsaga show_line_diagnostics<CR>', opts)
+  end,
+})
+local lspconfig = require('lspconfig')
+
+-- Tailwind CSS language server setup
+lspconfig.tailwindcss.setup({
+  filetypes = { "html", "typescriptreact", "javascriptreact", "css" },
+  settings = {
+    tailwindCSS = {
+      experimental = {
+        classRegex = {
+          "tw`([^`]*)", -- For Tailwind `tw` usage
+          'tw="([^"]*)', -- For inline Tailwind classes
+        }
+      }
+    }
+  }
+})
+require("lspconfig").html.setup{} -- Configure for your specific language server
 require("luasnip.loaders.from_vscode").lazy_load()
