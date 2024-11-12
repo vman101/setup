@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =0
+let g:netrw_dirhist_0='/home/victor/.vim'
+let g:netrw_dirhist_9='/home/victor/.vim/bundle/coc.nvim'
+let g:netrw_dirhist_8='/home/victor'
+let g:netrw_dirhist_7='/home/victor/odin'
+let g:netrw_dirhist_6='/home/victor'
+let g:netrw_dirhist_5='/home/victor/odin'
+let g:netrw_dirhist_4='/home/victor'
+let g:netrw_dirhist_3='/home/victor/.local'
+let g:netrw_dirhist_2='/home/victor'
+let g:netrw_dirhist_1='/home/victor/jobited/src/app/onboarding/slides'
